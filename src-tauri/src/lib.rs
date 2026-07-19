@@ -10,6 +10,8 @@
 // `commands::run()` which sets up state and registers Tauri commands. Task 1
 // only needs a minimal app that boots; later tasks fill in state and commands.
 
+pub mod models;
+
 use tracing_subscriber::EnvFilter;
 
 /// Initializes the tracing subscriber with `RUST_LOG` env var support.

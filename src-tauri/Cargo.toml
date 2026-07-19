@@ -1,0 +1,45 @@
+[package]
+name = "spacemolt-viewer"
+version = "0.1.0"
+description = "Multi-account dashboard for the SpaceMolt AI agent MMO"
+authors = ["equail"]
+edition = "2021"
+rust-version = "1.77"
+
+# Tauri v2 native binary
+[lib]
+name = "spacemolt_viewer_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+# Tauri v2 core + Stronghold plugin (encrypted credential storage — Decision #3)
+tauri = { version = "2", features = [] }
+tauri-plugin-stronghold = "2"
+
+# Serde — lenient decoding of inconsistent server shapes (Decision #7 resilient decoding)
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# Async runtime + WebSocket v2 (push-only — Decision #8)
+tokio = { version = "1", features = ["full"] }
+tokio-tungstenite = { version = "0.24", features = ["native-tls"] }
+futures-util = "0.3"
+
+# MCP — official rmcp Rust SDK (Decision #4 — NOT hand-rolled JSON-RPC)
+rmcp = "0.1"
+
+# Logging + errors
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "2"
+
+# No `windows` crate — Stronghold handles credential storage cross-platform.
+# No `reqwest` for MCP — rmcp SDK handles HTTP transport.
+
+[features]
+# This feature is used for production builds or when a dev server is not
+# specified, DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]

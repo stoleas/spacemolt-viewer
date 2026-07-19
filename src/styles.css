@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Dark theme is forced — see Decision #2 in the plan (v1 scope). */
+html,
+body {
+  background-color: #020617; /* slate-950 */
+  color: #f1f5f9;            /* slate-100 */
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+#boot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  font-size: 1rem;
+  color: #94a3b8; /* slate-400 */
+}

@@ -29,7 +29,11 @@ tokio-tungstenite = { version = "0.24", features = ["native-tls"] }
 futures-util = "0.3"
 
 # MCP — official rmcp Rust SDK (Decision #4 — NOT hand-rolled JSON-RPC)
-rmcp = "0.1"
+# rmcp 0.1 only had legacy SSE transport (GET-first, discover-endpoint).
+# rmcp 2.x has StreamableHttpClientTransport (POST-to-single-endpoint,
+# mcp-session-id header, SSE framing) — the correct MCP spec transport.
+# Features: client + transport-streamable-http-client-reqwest (reqwest impl).
+rmcp = { version = "2", features = ["client", "transport-streamable-http-client-reqwest"] }
 
 # Logging + errors
 tracing = "0.1"

@@ -12,6 +12,7 @@
 
 pub mod mcp_client;
 pub mod models;
+pub mod ws_client;
 
 use tracing_subscriber::EnvFilter;
 

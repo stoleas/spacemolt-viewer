@@ -466,6 +466,7 @@ function setupCredentialModals(): void {
       await invoke("init_credentials", { password });
       hideModal("credential-setup-modal");
       await refreshAccounts();
+      await autoConnectFirst();
     } catch (err) {
       setupErr.textContent = err instanceof Error ? err.message : String(err);
       setupErr.classList.remove("hidden");
@@ -485,6 +486,7 @@ function setupCredentialModals(): void {
       await invoke("load_accounts", { password });
       hideModal("credential-unlock-modal");
       await refreshAccounts();
+      await autoConnectFirst();
     } catch (err) {
       unlockErr.textContent = err instanceof Error ? err.message : String(err);
       unlockErr.classList.remove("hidden");
@@ -501,6 +503,32 @@ function setupClearEvents(): void {
       renderEvents();
     }
   });
+}
+
+// === Auto-connect on launch (Decision #10) ===
+// Auto-connect the first saved account after credentials are unlocked.
+// Uses the serial connection queue — no parallel connects.
+
+let autoConnectAttempted = false;
+
+async function autoConnectFirst(): Promise<void> {
+  if (autoConnectAttempted) return;
+  if (accounts.length === 0) return;
+  autoConnectAttempted = true;
+
+  const first = accounts[0];
+  selectAccount(first.username);
+  info(`Auto-connecting first account: ${first.username}`);
+  try {
+    await invoke("connect_account", { username: first.username });
+  } catch (err) {
+    // Non-fatal — user can manually connect via the ▶ button
+    console.error("[SpaceMolt] Auto-connect failed:", err);
+  }
+}
+
+function info(msg: string): void {
+  console.log(`[SpaceMolt] ${msg}`);
 }
 
 // === Boot sequence ===

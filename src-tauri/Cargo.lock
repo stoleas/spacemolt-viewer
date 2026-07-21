@@ -3845,6 +3845,8 @@ name = "spacemolt-viewer"
 version = "0.1.0"
 dependencies = [
  "futures-util",
+ "iota-crypto",
+ "iota_stronghold",
  "rmcp",
  "serde",
  "serde_json",
@@ -3856,6 +3858,7 @@ dependencies = [
  "tokio-tungstenite",
  "tracing",
  "tracing-subscriber",
+ "zeroize",
 ]
 
 [[package]]

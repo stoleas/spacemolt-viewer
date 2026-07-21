@@ -35,6 +35,18 @@ futures-util = "0.3"
 # Features: client + transport-streamable-http-client-reqwest (reqwest impl).
 rmcp = { version = "2", features = ["client", "transport-streamable-http-client-reqwest"] }
 
+# Credential storage — IOTA Stronghold (encrypted at rest, cross-platform).
+# Used directly for Rust-side credential management (Decision #3).
+# tauri-plugin-stronghold is kept for frontend IPC (load_store/create_store).
+iota_stronghold = "2"
+
+# Crypto primitives for key derivation (blake2b256 hash for Stronghold KeyProvider).
+# Package name is iota-crypto, crate name is crypto.
+iota-crypto = { version = "0.23", default-features = false, features = ["blake2b", "random"] }
+
+# Zeroize for secure memory clearing of passwords/keys.
+zeroize = { version = "1", features = ["zeroize_derive"] }
+
 # Logging + errors
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }

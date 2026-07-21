@@ -23,7 +23,7 @@
 
 use std::collections::HashMap;
 use std::path::PathBuf;
-use tauri::{AppHandle, State};
+use tauri::{AppHandle, Emitter, State};
 use tokio::sync::Mutex;
 use tracing::info;
 
@@ -255,8 +255,11 @@ async fn connect_account(
 }
 
 /// Disconnect an account. Aborts WS + GSM tasks, shuts down MCP session.
+/// Emits a final `connection_state: disconnected` event so the frontend
+/// updates the connection indicator.
 #[tauri::command]
 async fn disconnect_account(
+    app: AppHandle,
     state: State<'_, AppState>,
     username: String,
 ) -> Result<(), String> {
@@ -264,6 +267,18 @@ async fn disconnect_account(
     if let Some(mut session) = sessions.remove(&username) {
         session.disconnect().await;
         info!(username, "Account disconnected via command");
+
+        // Emit final disconnected state so frontend updates UI
+        use crate::game_state::AccountConnectionState;
+        use crate::models::ConnectionState;
+        let _ = app.emit(
+            "connection_state",
+            &AccountConnectionState {
+                username: username.clone(),
+                state: ConnectionState::Disconnected,
+            },
+        );
+
         Ok(())
     } else {
         Err(format!("Account '{username}' is not connected"))

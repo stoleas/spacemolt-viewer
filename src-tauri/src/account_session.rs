@@ -125,7 +125,7 @@ impl AccountSession {
             handle.abort();
         }
 
-        // Abort GSM task (if present — Task 9 not implemented yet)
+        // Abort GSM task (owns MCP session — its DropGuard cleans up transport)
         if let Some(handle) = self.gsm_handle.take() {
             handle.abort();
         }

@@ -3844,6 +3844,7 @@ dependencies = [
 name = "spacemolt-viewer"
 version = "0.1.0"
 dependencies = [
+ "dirs-next",
  "futures-util",
  "iota-crypto",
  "iota_stronghold",

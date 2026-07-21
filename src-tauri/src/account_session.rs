@@ -145,6 +145,15 @@ impl AccountSession {
         self.mcp_session.as_ref().is_some_and(|m| m.is_active())
     }
 
+    /// Take the MCP session out of the AccountSession.
+    /// Used by Task 10 (commands.rs) to move the MCP session into the
+    /// GameStateManager, which owns it for the duration of the connection.
+    /// After this, `is_connected()` returns false and `mcp_session_mut()`
+    /// returns None — lifecycle is tracked via the WS + GSM handles.
+    pub fn mcp_session_take(&mut self) -> Option<McpSession> {
+        self.mcp_session.take()
+    }
+
     /// Get a mutable reference to the MCP session (for GameApi queries).
     /// Returns `None` if disconnected.
     pub fn mcp_session_mut(&mut self) -> Option<&mut McpSession> {

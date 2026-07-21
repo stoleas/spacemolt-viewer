@@ -12,6 +12,7 @@
 
 pub mod account_manager;
 pub mod account_session;
+pub mod commands;
 pub mod credential_store;
 pub mod game_api;
 pub mod game_state;
@@ -29,16 +30,12 @@ pub fn init_tracing() {
         .init();
 }
 
-/// Tauri app entry point. Task 1: minimal app that opens a window and
-/// initializes tracing + Stronghold plugin. Later tasks register commands
-/// and state via `tauri::Builder::manage(...)`.
+/// Tauri app entry point. Wires up Stronghold plugin, AppState, and all
+/// Tauri commands for account management and connection control.
 pub fn run() {
     init_tracing();
     tracing::info!("SpaceMolt Viewer starting (v0.1.0)");
 
-    // Stronghold plugin: the closure derives a vault-key hash from the
-    // user-provided password. The actual vault password is supplied at runtime
-    // via the frontend `load_store`/`create_store` IPC calls (Task 6).
     tauri::Builder::default()
         .plugin(
             tauri_plugin_stronghold::Builder::new(|password: &str| {
@@ -50,6 +47,8 @@ pub fn run() {
             })
             .build(),
         )
+        .manage(commands::create_app_state())
+        .invoke_handler(commands::invoke_handler())
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

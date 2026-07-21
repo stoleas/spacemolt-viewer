@@ -52,8 +52,7 @@ tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 thiserror = "2"
 
-# No `windows` crate — Stronghold handles credential storage cross-platform.
-# No `reqwest` for MCP — rmcp SDK handles HTTP transport.
+dirs-next = "2"
 
 [features]
 # This feature is used for production builds or when a dev server is not

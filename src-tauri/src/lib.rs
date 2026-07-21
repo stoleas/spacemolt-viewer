@@ -14,6 +14,7 @@ pub mod account_manager;
 pub mod account_session;
 pub mod credential_store;
 pub mod game_api;
+pub mod game_state;
 pub mod mcp_client;
 pub mod models;
 pub mod ws_client;

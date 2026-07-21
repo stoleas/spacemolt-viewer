@@ -10,6 +10,7 @@
 // `commands::run()` which sets up state and registers Tauri commands. Task 1
 // only needs a minimal app that boots; later tasks fill in state and commands.
 
+pub mod game_api;
 pub mod mcp_client;
 pub mod models;
 pub mod ws_client;

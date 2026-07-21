@@ -8,8 +8,104 @@
   </head>
   <body class="bg-slate-950 text-slate-100 min-h-screen">
     <div id="app">
-      <div id="boot">Loading SpaceMolt Viewer…</div>
+      <!-- 3-pane layout: accounts | monitor | logs -->
+
+      <!-- Left pane: account list -->
+      <aside id="accounts-pane" class="pane">
+        <div class="pane-header">
+          <h2>Accounts</h2>
+          <button id="btn-add-account" class="btn-primary" title="Add account">+</button>
+        </div>
+        <div id="account-list">
+          <div class="empty-state">No accounts configured.<br />Click + to add one.</div>
+        </div>
+      </aside>
+
+      <!-- Center pane: system monitor -->
+      <main id="monitor-pane" class="pane">
+        <div class="pane-header">
+          <h2>Monitor</h2>
+          <div id="active-account-name" class="muted">No account selected</div>
+        </div>
+        <div id="monitor-content">
+          <div class="empty-state">Select an account to view its status.</div>
+        </div>
+      </main>
+
+      <!-- Right pane: event feed / logs -->
+      <aside id="logs-pane" class="pane">
+        <div class="pane-header">
+          <h2>Events</h2>
+          <button id="btn-clear-events" class="btn-secondary" title="Clear events">Clear</button>
+        </div>
+        <div id="event-list">
+          <div class="empty-state">No events yet.</div>
+        </div>
+      </aside>
     </div>
+
+    <!-- Add Account modal (hidden by default) -->
+    <div id="add-account-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Add Account</h3>
+        <form id="add-account-form">
+          <label>
+            Display Name
+            <input type="text" id="input-display-name" placeholder="e.g. Stoleas" required />
+          </label>
+          <label>
+            Username
+            <input type="text" id="input-username" placeholder="e.g. stoleas" required />
+          </label>
+          <label>
+            Password
+            <input type="password" id="input-password" placeholder="Game password" required />
+          </label>
+          <div id="add-account-error" class="error-msg hidden"></div>
+          <div class="modal-actions">
+            <button type="button" id="btn-cancel-add" class="btn-secondary">Cancel</button>
+            <button type="submit" class="btn-primary">Add</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Credential store setup modal (shown on first launch) -->
+    <div id="credential-setup-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Welcome to SpaceMolt Viewer</h3>
+        <p class="muted">Create a master password to encrypt your stored game credentials. This password will be required each time you launch the app.</p>
+        <form id="credential-setup-form">
+          <label>
+            Master Password
+            <input type="password" id="input-master-password" placeholder="Choose a master password" required />
+          </label>
+          <div id="credential-setup-error" class="error-msg hidden"></div>
+          <div class="modal-actions">
+            <button type="submit" class="btn-primary">Create</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Credential store unlock modal (shown when snapshot exists) -->
+    <div id="credential-unlock-modal" class="modal hidden">
+      <div class="modal-content">
+        <h3>Unlock Credentials</h3>
+        <p class="muted">Enter your master password to load saved accounts.</p>
+        <form id="credential-unlock-form">
+          <label>
+            Master Password
+            <input type="password" id="input-unlock-password" placeholder="Master password" required />
+          </label>
+          <div id="credential-unlock-error" class="error-msg hidden"></div>
+          <div class="modal-actions">
+            <button type="submit" class="btn-primary">Unlock</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

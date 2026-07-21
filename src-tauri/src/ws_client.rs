@@ -22,9 +22,10 @@ use futures_util::{SinkExt, StreamExt};
 use serde_json::{json, Value};
 use std::time::Duration;
 use tokio::sync::mpsc;
+use tokio::task::JoinHandle;
 use tokio_tungstenite::{
     connect_async,
-    tungstenite::protocol::{frame::coding::CloseCode, CloseFrame},
+    tungstenite::protocol::frame::coding::CloseCode,
     tungstenite::Message,
     WebSocketStream, MaybeTlsStream,
 };
@@ -140,8 +141,9 @@ fn close_code_to_u16(code: &CloseCode) -> u16 {
 /// let (message_tx, message_rx) = mpsc::channel(100);
 /// let (state_tx, state_rx) = mpsc::channel(20);
 /// let client = WsClient::new(state_tx, message_tx);
-/// let logged_in = client.connect_and_login("user", "pass").await?;
+/// let (logged_in, ws_join) = client.connect_and_login("user", "pass").await?;
 /// // message_rx and state_rx now receive push events and connection state changes
+/// // ws_join can be .abort()'d to stop the background receive loop
 /// ```
 pub struct WsClient {
     state_tx: mpsc::Sender<ConnectionState>,
@@ -164,8 +166,13 @@ impl WsClient {
 
     /// Connect to the WS v2 endpoint, perform the login handshake, and spawn
     /// the background receive loop. Returns the `logged_in` payload (initial
-    /// full state snapshot).
-    pub async fn connect_and_login(&self, username: &str, password: &str) -> Result<Value, String> {
+    /// full state snapshot) and the `JoinHandle` for the spawned receive loop
+    /// so the caller (`AccountSession`) can `abort()` it on disconnect.
+    pub async fn connect_and_login(
+        &self,
+        username: &str,
+        password: &str,
+    ) -> Result<(Value, JoinHandle<()>), String> {
         let _ = self.state_tx.send(ConnectionState::Connecting).await;
 
         let (ws_stream, _response) =
@@ -199,9 +206,9 @@ impl WsClient {
             username: username.to_string(),
             password: password.to_string(),
         };
-        tokio::spawn(receive_loop(ws_stream, handle));
+        let join_handle = tokio::spawn(receive_loop(ws_stream, handle));
 
-        Ok(logged_in)
+        Ok((logged_in, join_handle))
     }
 }
 

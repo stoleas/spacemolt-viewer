@@ -11,6 +11,7 @@
 // only needs a minimal app that boots; later tasks fill in state and commands.
 
 pub mod account_manager;
+pub mod account_session;
 pub mod credential_store;
 pub mod game_api;
 pub mod mcp_client;
